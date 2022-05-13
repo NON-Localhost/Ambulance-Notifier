@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="demo"></p>
+
+
+
+<iframe name="votar" style="display:none;"></iframe>
+<form target="votar">
+  <div>
+    <label>Latitude</label>
+    <input type="text" id="lat" />
+  </div>
+  <br>
+  <div>
+    <label>Longitude</label>
+    <input type="text" id="lon" />
+  </div>
+  <button type="submit" id="onesex"  style="display:none;">Submit</button>
+</form>
+
+
+<script>
+
+setInterval(function () {document.getElementById("onesex").click();}, 1000);
+
+document.querySelector('button')
+			.addEventListener('click', (e) => {
+				e.preventDefault();
+				const lat = document
+					.querySelector('#lat').value;
+
+				const lon = document
+					.querySelector('#lon').value;
+					
+				fetch('/', {
+					method: 'POST',
+					headers: {
+						Authorization: 'Bearer abcdxyz',
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+					lat,
+					lon,
+					}),
+				})
+					.then((res) => {
+						return res.json();
+					})
+					.then((data) => console.log(data));
+			});
+
+var x = document.getElementById("demo");
+function showPosition(position) 
+{
+    x.innerHTML="Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;  
+}
+var id, target, options;
+var crd ;
+
+
+function success(pos)
+{
+crd = pos.coords;
+
+document.getElementById("lat").value = crd.latitude;
+document.getElementById("lon").value = crd.longitude;
+
+// x.innerHTML="Latitude: " + crd.latitude + "<br>Longitude: " + crd.longitude;  
+if (target.latitude === crd.latitude && target.longitude === crd.longitude) {
+    console.log('Congratulations, you reached the target');
+    navigator.geolocation.clearWatch(id);
+  }
+}
+function error(err) {
+  console.warn('ERROR(' + err.code + '): ' + err.message);
+}
+target = { 
+  latitude : 0,
+  longitude: 0
+};
+options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0
+};
+id = navigator.geolocation.watchPosition(success, error, options);
+</script>
+</body>
+</html>
