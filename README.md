@@ -1,2 +1,4 @@
 # Ambulance-Notifier
-This is a group project for a hackathon named Hack-en-counter by NowOrNever
+
+
+Front end and Backend for getting the latitude and longitude and then posting it to node.js backend server
