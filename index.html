@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+	<head>
+
+		
+	</head>
 <body>
 <p id="demo"></p>
-
-
 
 <iframe name="votar" style="display:none;"></iframe>
 <form target="votar">
@@ -16,9 +18,19 @@
     <label>Longitude</label>
     <input type="text" id="lon" />
   </div>
+  <br>
+  <div>
+    <label style="display:none;" >email</label>
+    <input style="display:none;"  type="text" id="eid" />
+  </div>
+  <br>
+  <div>
+    <label style="display:none;"  >user_type</label>
+    <input style="display:none;"  type="text" id="utype" />
+  </div>
+  <br>
   <button type="submit" id="onesex"  style="display:none;">Submit</button>
 </form>
-
 
 <script>
 
@@ -32,6 +44,12 @@ document.querySelector('button')
 
 				const lon = document
 					.querySelector('#lon').value;
+
+					const eid = document
+					.querySelector('#eid').value;
+					const utype = document
+					.querySelector('#utype').value;
+
 					
 				fetch('/', {
 					method: 'POST',
@@ -42,6 +60,8 @@ document.querySelector('button')
 					body: JSON.stringify({
 					lat,
 					lon,
+					eid,
+					utype,
 					}),
 				})
 					.then((res) => {
@@ -58,13 +78,19 @@ function showPosition(position)
 var id, target, options;
 var crd ;
 
+var cnt = 2 ;
 
 function success(pos)
 {
+
+	cnt+=1;
+
 crd = pos.coords;
 
-document.getElementById("lat").value = crd.latitude;
+document.getElementById("lat").value = crd.latitude+cnt;
 document.getElementById("lon").value = crd.longitude;
+document.getElementById("eid").value = "frontend@gmail.com";
+document.getElementById("utype").value = "u";
 
 // x.innerHTML="Latitude: " + crd.latitude + "<br>Longitude: " + crd.longitude;  
 if (target.latitude === crd.latitude && target.longitude === crd.longitude) {
