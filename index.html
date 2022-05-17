@@ -1,109 +1,133 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	</head>
-<body>
-<p id="demo"></p>
+  <head>
+  
+  </head>
+  <body>
+    
 
-<iframe name="votar" style="display:none;"></iframe>
-<form target="votar">
-  <div>
-    <label>Latitude</label>
-    <input type="text" id="lat" />
-  </div>
-  <br>
-  <div>
-    <label>Longitude</label>
-    <input type="text" id="lon" />
-  </div>
-  <br>
-  <div>
-    <label style="display:none;" >email</label>
-    <input   type="text" id="eid" />
-  </div>
-  <br>
-  <div>
-    <label style="display:none;"  >user_type</label>
-    <input style="display:none;"  type="text" id="utype" />
-  </div>
-  <br>
-  <button type="submit" id="onesex"  style="display:none;">Submit</button>
-</form>
+    <iframe name="votar" style="display: none"></iframe>
+    <form target="votar">
+      <div>
+        <label>Latitude</label>
+        <input type="text" id="lat" />
+      </div>
+      <br />
+      <div>
+        <label>Longitude</label>
+        <input type="text" id="lon" />
+      </div>
+      <br />
+      <div>
+        <label style="display: none">email</label>
+        <input type="text" id="eid" />
+      </div>
+      <br />
+      <div>
+        <label style="display: none">user_type</label>
+        <input style="display: none" type="text" id="utype" />
+      </div>
+      <br />
+      <button type="submit" id="onesex" style="display: none">Submit</button>
+    </form>
 
-<script>
+    <script>
+      const publicVapidKey =
+        "BAFYDPAHln-GiXxqjTXj91K9ktMc9j5412T_vcKRviiIp1gTTGsoMiBNDxZBxMaoqBTMbK2JsjTE3b6ePalMr8s";
+      if ("serviceWorker" in navigator) {
+        send().catch((err) => console.error(err));
+      }
 
-setInterval(function () {document.getElementById("onesex").click();}, 1000);
+      async function send() {
+        const register = await navigator.serviceWorker.register("/worker.js", {
+          scope: "/",
+        });
+        const subscription = await register.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+        });
+        await fetch("/sub", {
+          method: "POST",
+          body: JSON.stringify(subscription),
+          headers: { "content-type": "application/json" },
+        });
+      }
 
-document.querySelector('button')
-			.addEventListener('click', (e) => {
-				e.preventDefault();
-				const lat = document
-					.querySelector('#lat').value;
+      function urlBase64ToUint8Array(base64String) {
+        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+        const base64 = (base64String + padding)
+          .replace(/\-/g, "+")
+          .replace(/_/g, "/");
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      }
 
-				const lon = document
-					.querySelector('#lon').value;
+      setInterval(function () {
+        document.getElementById("onesex").click();
+      }, 1000);
 
-					const eid = document
-					.querySelector('#eid').value;
-					const utype = document
-					.querySelector('#utype').value;
+      document.querySelector("button").addEventListener("click", (e) => {
+        e.preventDefault();
+        const lat = document.querySelector("#lat").value;
+        const lon = document.querySelector("#lon").value;
+        const eid = document.querySelector("#eid").value;
+        const utype = document.querySelector("#utype").value;
 
-					
-				fetch('/', {
-					method: 'POST',
-					headers: {
-						Authorization: 'Bearer abcdxyz',
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-					lat,
-					lon,
-					eid,
-					utype,
-					}),
-				})
-					.then((res) => {
-						return res.json();
-					})
-					.then((data) => console.log(data));
-			});
+        fetch("/", {
+          method: "POST",
+          headers: {
+            Authorization: "good_job",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lat,
+            lon,
+            eid,
+            utype,
+          }),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => console.log(data));
+      });
 
-var x = document.getElementById("demo");
-function showPosition(position) 
-{
-    x.innerHTML="Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;  
-}
-var id, target, options;
-var crd ;
+      var id, target, options;
+      var crd;
 
-function success(pos)
-{
-crd = pos.coords;
+      function success(pos) {
+        crd = pos.coords;
 
-document.getElementById("lat").value = crd.latitude;
-document.getElementById("lon").value = crd.longitude;
-document.getElementById("eid").value = "frontend@gmail.com";
-document.getElementById("utype").value = "u";
+        document.getElementById("lat").value = crd.latitude;
+        document.getElementById("lon").value = crd.longitude;
+        document.getElementById("eid").value = "frontend@gmail.com"; //\hardcoded
+        document.getElementById("utype").value = "u"; // hardcoded
 
-// x.innerHTML="Latitude: " + crd.latitude + "<br>Longitude: " + crd.longitude;  
-if (target.latitude === crd.latitude && target.longitude === crd.longitude) {
-    console.log('Congratulations, you reached the target');
-    navigator.geolocation.clearWatch(id);
-  }
-}
-function error(err) {
-  console.warn('ERROR(' + err.code + '): ' + err.message);
-}
-target = { 
-  latitude : 0,
-  longitude: 0
-};
-options = {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0
-};
-id = navigator.geolocation.watchPosition(success, error, options);
-</script>
-</body>
+        if (
+          target.latitude === crd.latitude &&
+          target.longitude === crd.longitude
+        ) {
+          console.log("Congratulations, you reached the target");
+          navigator.geolocation.clearWatch(id);
+        }
+      }
+      function error(err) {
+        console.warn("ERROR(" + err.code + "): " + err.message);
+      }
+      target = {
+        latitude: 0,
+        longitude: 0,
+      };
+      options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      };
+      id = navigator.geolocation.watchPosition(success, error, options);
+    </script>
+  </body>
 </html>
